@@ -4,11 +4,11 @@ require 'rspec-deep-ignore-order-matcher/version'
 RSpec::Matchers.define :be_deep_equal do |expected|
 	match { |actual| m? actual, expected }
 
-	failure_message_for_should do |actual|
+	failure_message do |actual|
 		"expected that #{actual} would be deep equal with #{expected}"
 	end
 
-	failure_message_for_should_not do |actual|
+	failure_message_when_negated do |actual|
 		"expected that #{actual} would not be deep equal with #{expected}"
 	end
 
@@ -21,6 +21,7 @@ RSpec::Matchers.define :be_deep_equal do |expected|
 		return hashes_matches?(actual, expected) if expected.is_a?(Hash) && actual.is_a?(Hash)
 		expected == actual
 	end
+	private :m?
 
 	def arrays_matches?(actual, expected)
 		exp = expected.clone
@@ -31,10 +32,12 @@ RSpec::Matchers.define :be_deep_equal do |expected|
 		end
 		exp.length == 0
 	end
+	private :arrays_matches?
 
 	def hashes_matches?(actual, expected)
 		return false unless actual.keys.sort == expected.keys.sort
 		actual.each { |key, value| return false unless m? value, expected[key] }
 		true
 	end
+	private :hashes_matches?
 end
